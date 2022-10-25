@@ -4,8 +4,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 public class MyAmazingBot extends TelegramLongPollingBot {
-
-    //todo: модификаторы доступа ✅
     private String token = System.getenv("TELEGRAM_BOT_TOKEN");
 
     @Override

@@ -1,16 +1,7 @@
 import java.util.Objects;
 
 public class BotLogic {
-    /*
-
-        // UI
-        // Application
-        // Domain
-
-            todo: Logic оч связана с UI
-     */
-
-    public String answer(String message){
+    public String answer(String message) {
         switch (parseUserMessage(message)) {
             case HELP:
                 return StandardAnswer.answerForHelp;
@@ -29,7 +20,6 @@ public class BotLogic {
 
 
 //  todo*: не хардкодить здесь команды, генироровать хелп только по тому, что точно умеем
-
 
 
     private UserRequest.UserRequests parseUserMessage(String message) {
