@@ -1,8 +1,8 @@
 public class UserRequest {
     public enum UserRequests{
-        HELP,
-        START,
-        JOKE,
-        TEACHER,
+        help,
+        start,
+        go,
+        create,
     }
 }

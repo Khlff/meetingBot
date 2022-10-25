@@ -3,20 +3,23 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public class MyAmazingBot extends TelegramLongPollingBot {
-    private String token = System.getenv("TELEGRAM_BOT_TOKEN");
+public class MeetingsBot extends TelegramLongPollingBot {
+    private final String botToken = System.getenv("BOT_TOKEN");
+    private final String botName = System.getenv("BOT_NAME");
 
     @Override
     public void onUpdateReceived(Update update) {
         BotLogic botLogic = new BotLogic();
-        // We check if the update has a message and the message has text
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
-            message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(botLogic.answer(update.getMessage().getText()));
 
+        // Если произошёл апдейт сообщения ионо имеет текст:
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            SendMessage message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setText(botLogic.get_answer(update.getMessage().getText()));
+
+            // Пробуем отправить:
             try {
-                execute(message); // Call method to send the message
+                execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -25,11 +28,11 @@ public class MyAmazingBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return "myamazingbot";
+        return botName;
     }
 
     @Override
     public String getBotToken() {
-        return token;
+        return botToken;
     }
 }

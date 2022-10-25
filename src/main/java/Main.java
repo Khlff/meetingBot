@@ -7,12 +7,11 @@ public class Main {
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new MyAmazingBot());
-        } catch (TelegramApiException e) {
+            botsApi.registerBot(new MeetingsBot());
+        }
+
+        catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 }
-// todo: сделайте новую точку входа-- бот который работает через консоль
-
-// расстояние Левенштейна
