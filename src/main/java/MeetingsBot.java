@@ -6,16 +6,16 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class MeetingsBot extends TelegramLongPollingBot {
     private final String botToken = System.getenv("BOT_TOKEN");
     private final String botName = System.getenv("BOT_NAME");
+    BotApp botApplication = new BotApp();
 
     @Override
     public void onUpdateReceived(Update update) {
-        BotLogic botLogic = new BotLogic();
-
-        // Если произошёл апдейт сообщения ионо имеет текст:
+//        BotLogic botLogic = new BotLogic();
+        // Если произошёл апдейт сообщения и оно имеет текст:
         if (update.hasMessage() && update.getMessage().hasText()) {
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
-            message.setText(botLogic.get_answer(update.getMessage().getText()));
+            message.setText(botApplication.commandHandler(update.getMessage().getText()));
 
             // Пробуем отправить:
             try {
