@@ -1,5 +1,5 @@
 package commands;
 
-public interface canHaveCommandList extends Command{
+public interface CanHaveCommandList extends Command{
     void setList(Command[] commands);
 }

@@ -1,6 +1,6 @@
 package commands;
 
-public class Help implements Command, canHaveCommandList {
+public class Help implements Command, CanHaveCommandList {
     @Override
     public String getHelp() {
         return "Вызов справки /help";

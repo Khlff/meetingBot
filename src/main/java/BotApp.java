@@ -1,18 +1,20 @@
 import commands.*;
 
 public class BotApp {
-    protected Command HelpCommand;
-    protected Command StartCommand;
-    public static Command[] commandList;
+
+    //todo модификаторы
+    private static Command[] commandList;
 
     static String defaultAnswer = "Команда не найдена";
-
     BotApp() {
-        HelpCommand = new Help();
-        StartCommand = new Start();
-        commandList = new Command[]{StartCommand, HelpCommand};
-        canHaveCommandList helpList = (canHaveCommandList) HelpCommand;
-        helpList.setList(commandList);
+        var repo = new PhotoRepository();
+
+        // todo: принимать список команд в аргументы конструктора
+
+        var helpCommand = new Help();
+        var startCommand = new Start();
+        commandList = new Command[]{startCommand, helpCommand};
+        helpCommand.setList(commandList);
     }
     public String commandHandler(String inputMessage){
         for (var i: commandList){
