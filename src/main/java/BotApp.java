@@ -1,4 +1,7 @@
 import commands.*;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+
+import java.util.List;
 
 public class BotApp {
 
@@ -13,15 +16,22 @@ public class BotApp {
 
         var helpCommand = new Help();
         var startCommand = new Start();
-        commandList = new Command[]{startCommand, helpCommand};
+        var createCommand = new Create(repo);
+        commandList = new Command[]{startCommand, helpCommand,createCommand};
         helpCommand.setList(commandList);
     }
-    public String commandHandler(String inputMessage){
-        for (var i: commandList){
-            if (i.isActive(inputMessage)) {
-                return i.Execute();
+    public String commandHandler(String inputMessage, Long chatID){
+        for (var iterCommand: commandList){
+            if (iterCommand.isActive(inputMessage)) {
+                if (iterCommand instanceof CanHaveChatID chatIDSetter)
+                    chatIDSetter.setChatId(chatID);
+
+                return iterCommand.Execute();
             }
         }
         return defaultAnswer;
+    }
+
+    public void setUserPhoto(Long chatID, List<PhotoSize> photo) {
     }
 }
