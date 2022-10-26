@@ -1,9 +1,16 @@
 package commands;
-public class Create implements Command, CanHaveChatID {
-    private final PhotoRepository photoRepository;
+
+import data.Data;
+import data.GetStatusHashmap;
+import data.StatusOfUploadInformation;
+
+import java.util.HashMap;
+
+public class Create implements Command, CanHaveChatID, GetStatusHashmap {
+    public static StatusOfUploadInformation statusOfUploadInformation;
     private Long chatId;
-    public Create(PhotoRepository photoRepository) {
-        this.photoRepository = photoRepository;
+    public Create(StatusOfUploadInformation statusOfUploadInformation) {
+        Create.statusOfUploadInformation = statusOfUploadInformation;
     }
 
     @Override
@@ -12,15 +19,22 @@ public class Create implements Command, CanHaveChatID {
     @Override
     public boolean isActive(String commandName) {return "/create".equals(commandName);}
 
-
     @Override
     public void setChatId(Long chatId) {
         this.chatId=chatId;
     }
     @Override
     public String Execute() {
-        if (!photoRepository.hasPhotoWaitingUpdate(chatId))
-            photoRepository.update(chatId);
-        return "Пришлите фото";
+        if (!statusOfUploadInformation.hasPhotoWaitingUpdate(chatId))
+            statusOfUploadInformation.update(chatId);
+        if (!statusOfUploadInformation.hasNameWaitingUpdate(chatId))
+            statusOfUploadInformation.update(chatId);
+        return """
+                Напиши своё имя и пришли фотокарточку...📝""";
+    }
+
+    @Override
+    public HashMap<Long, Data> getHashMap() {
+        return statusOfUploadInformation.getHashMap();
     }
 }
