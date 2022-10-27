@@ -1,10 +1,6 @@
 import commands.*;
-import data.Data;
-import data.GetStatusHashmap;
-import data.StatusOfUploadInformation;
+import data.UsersInformation;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
-
-import java.util.HashMap;
 
 
 public class BotApp {
@@ -18,7 +14,7 @@ public class BotApp {
     Command createCommand;
 
     BotApp() {
-        var repo = new StatusOfUploadInformation();
+        var repo = new UsersInformation();
 
         // todo: принимать список команд в аргументы конструктора
 
@@ -40,16 +36,23 @@ public class BotApp {
         }
         return defaultAnswer;
     }
-    public HashMap<Long, Data> getHashMap(){
-        if (createCommand instanceof GetStatusHashmap hashmap){
-            return hashmap.getHashMap();
-        }
 
-        return null;
-    }
-    public void setUserPhoto(Long chatID, PhotoSize photo) {
+    public String setUserPhoto(Long chatID, PhotoSize photo) {
         var photoId = photo.getFileId();
+        UsersInformation.updateStatusOfPhotoByUserId(chatID, false);
         System.out.println(photoId);
+        return "Фото загружено";
         // Записываем в бд chatId = user_id, photoId
+    }
+
+    public String setUserName(Long chatID, String name) {
+        if (name.length() > 20) {
+            return "Имя не может быть таким длинным";
+        } else {
+            UsersInformation.updateStatusOfNameByUserId(chatID, false);
+            System.out.println(name);
+            // Записываем в бд chatId, name
+            return "Имя изменено";
+        }
     }
 }

@@ -1,40 +1,39 @@
 package commands;
 
-import data.Data;
-import data.GetStatusHashmap;
-import data.StatusOfUploadInformation;
 
-import java.util.HashMap;
+import data.UsersInformation;
 
-public class Create implements Command, CanHaveChatID, GetStatusHashmap {
-    public static StatusOfUploadInformation statusOfUploadInformation;
+
+public class Create implements Command, CanHaveChatID {
+    public static UsersInformation usersInformation;
     private Long chatId;
-    public Create(StatusOfUploadInformation statusOfUploadInformation) {
-        Create.statusOfUploadInformation = statusOfUploadInformation;
+
+    public Create(UsersInformation usersInformation) {
+        Create.usersInformation = usersInformation;
     }
 
     @Override
-    public String getHelp() {return "Создать свой профиль /create";}
+    public String getHelp() {
+        return "Создать свой профиль /create";
+    }
 
     @Override
-    public boolean isActive(String commandName) {return "/create".equals(commandName);}
+    public boolean isActive(String commandName) {
+        return "/create".equals(commandName);
+    }
 
     @Override
     public void setChatId(Long chatId) {
-        this.chatId=chatId;
-    }
-    @Override
-    public String Execute() {
-        if (!statusOfUploadInformation.hasPhotoWaitingUpdate(chatId))
-            statusOfUploadInformation.update(chatId);
-        if (!statusOfUploadInformation.hasNameWaitingUpdate(chatId))
-            statusOfUploadInformation.update(chatId);
-        return """
-                Напиши своё имя и пришли фотокарточку...📝""";
+        this.chatId = chatId;
     }
 
     @Override
-    public HashMap<Long, Data> getHashMap() {
-        return statusOfUploadInformation.getHashMap();
+    public String Execute() {
+        if (!UsersInformation.hasPhotoWaitingUpdate(chatId))
+            usersInformation.update(chatId);
+        if (!UsersInformation.hasNameWaitingUpdate(chatId))
+            usersInformation.update(chatId);
+        return """
+                Напиши своё имя и пришли фотокарточку...📝""";
     }
 }

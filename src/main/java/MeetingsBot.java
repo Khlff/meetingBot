@@ -1,3 +1,4 @@
+import data.UsersInformation;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
@@ -14,31 +15,50 @@ public class MeetingsBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
+        if (UsersInformation.hasPhotoWaitingUpdate(chatID)) {
+            if (update.hasMessage() && update.getMessage().hasPhoto()) {
+                List<PhotoSize> photos = update.getMessage().getPhoto();
+                PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
 
-        if (update.hasMessage() && update.getMessage().hasPhoto()){
-            Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
+                var message = new SendMessage();
+                message.setChatId(chatID);
+                if (maxPhoto != null) {
+                    String answer = botApplication.setUserPhoto(chatID, maxPhoto);
+                    message.setText(answer);
+                } else message.setText("Ошибка фото");
 
-            List<PhotoSize> photos = update.getMessage().getPhoto();
-            PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (UsersInformation.hasNameWaitingUpdate(chatID)) {
+            if (update.hasMessage() && update.getMessage().hasText()) {
+                var message = new SendMessage();
+                message.setChatId(chatID);
+                String username = update.getMessage().getText();
+                message.setText(botApplication.setUserName(chatID, username));
 
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else if (update.hasMessage() && update.getMessage().hasText()) {
             var message = new SendMessage();
             message.setChatId(chatID);
-            if (maxPhoto!=null){
-                botApplication.setUserPhoto(chatID, maxPhoto);
-                message.setText("Фото загружено");}
-            else message.setText("Ошибка фото");
+            message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
 
-            try {execute(message);} catch (TelegramApiException e){e.printStackTrace();}
-        }
 
-        else if (update.hasMessage() && update.getMessage().hasText()) {
-            var chatID =update.getMessage().getChatId().toString();
-            var message = new SendMessage();
-            message.setChatId(chatID);
-            message.setText(botApplication.commandHandler(update.getMessage().getText(), Long.valueOf(chatID)));
-
-            // Пробуем отправить:
-            try {execute(message);} catch (TelegramApiException e) {e.printStackTrace();}
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
 
