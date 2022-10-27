@@ -16,7 +16,7 @@ public class MeetingsBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
-        if (UsersInformation.hasPhotoWaitingUpdate(chatID)) {
+        if (UsersInformation.hasPhotoWaitingUpdate(chatID) || UsersInformation.hasNameWaitingUpdate(chatID)) {
             if (update.hasMessage() && update.getMessage().hasPhoto()) {
                 List<PhotoSize> photos = update.getMessage().getPhoto();
                 PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
@@ -33,9 +33,7 @@ public class MeetingsBot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     e.printStackTrace();
                 }
-            }
-        } else if (UsersInformation.hasNameWaitingUpdate(chatID)) {
-            if (update.hasMessage() && update.getMessage().hasText()) {
+            } else if (update.hasMessage() && update.getMessage().hasText()) {
                 var message = new SendMessage();
                 message.setChatId(chatID);
                 String username = update.getMessage().getText();
@@ -47,7 +45,6 @@ public class MeetingsBot extends TelegramLongPollingBot {
                     e.printStackTrace();
                 }
             }
-
         } else if (update.hasMessage() && update.getMessage().hasText()) {
             var message = new SendMessage();
             message.setChatId(chatID);
