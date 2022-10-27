@@ -38,6 +38,7 @@ public class BotApp {
     }
 
     public String setUserPhoto(Long chatID, PhotoSize photo) {
+        if (photo == null) return "Ошибка фото";
         var photoId = photo.getFileId();
         UsersInformation.updateStatusOfPhotoByUserId(chatID, false);
         System.out.println(photoId);

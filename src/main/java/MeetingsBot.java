@@ -15,47 +15,35 @@ public class MeetingsBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
+        var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
+        message.setChatId(chatID);
+
         if (UsersInformation.hasPhotoWaitingUpdate(chatID) || UsersInformation.hasNameWaitingUpdate(chatID)) {
             if (update.hasMessage() && update.getMessage().hasPhoto()) {
-                List<PhotoSize> photos = update.getMessage().getPhoto();
-                PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
+                String answer;
+                if (UsersInformation.hasPhotoWaitingUpdate(chatID)) {
+                    List<PhotoSize> photos = update.getMessage().getPhoto();
+                    PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
+                    answer = botApplication.setUserPhoto(chatID, maxPhoto);
+                } else answer = "Пришли своё имя!";
+                message.setText(answer);
 
-                var message = new SendMessage();
-                message.setChatId(chatID);
-                if (maxPhoto != null) {
-                    String answer = botApplication.setUserPhoto(chatID, maxPhoto);
-                    message.setText(answer);
-                } else message.setText("Ошибка фото");
-
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
             } else if (update.hasMessage() && update.getMessage().hasText()) {
-                var message = new SendMessage();
-                message.setChatId(chatID);
-                String username = update.getMessage().getText();
-                message.setText(botApplication.setUserName(chatID, username));
-
-                try {
-                    execute(message);
-                } catch (TelegramApiException e) {
-                    e.printStackTrace();
-                }
+                String inputUsername = update.getMessage().getText();
+                if (UsersInformation.hasNameWaitingUpdate(chatID))
+                    message.setText(botApplication.setUserName(chatID, inputUsername));
+                else message.setText("Пришли фотокарточку!");
             }
+
         } else if (update.hasMessage() && update.getMessage().hasText()) {
-            var message = new SendMessage();
-            message.setChatId(chatID);
             message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
+        }
 
-
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 
