@@ -14,7 +14,7 @@ public class Create implements Command, CanHaveChatID {
 
     @Override
     public String getHelp() {
-        return "Создать свой профиль /create";
+        return "/create - создать/изменить свой профиль";
     }
 
     @Override
@@ -29,11 +29,9 @@ public class Create implements Command, CanHaveChatID {
 
     @Override
     public String Execute() {
-        if (!UsersInformation.hasPhotoWaitingUpdate(chatId))
-            usersInformation.update(chatId);
-        if (!UsersInformation.hasNameWaitingUpdate(chatId))
+        if (!UsersInformation.hasWaitingUpdate(chatId))
             usersInformation.update(chatId);
         return """
-                Напиши своё имя и пришли фотокарточку...📝""";
+                Пришли своё имя и фотокарточку одним сообщением...📝""";
     }
 }

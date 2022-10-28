@@ -1,6 +1,9 @@
 import commands.*;
 import data.UsersInformation;
+import db.Database;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
+
+import java.sql.SQLException;
 
 
 public class BotApp {
@@ -13,9 +16,10 @@ public class BotApp {
     Command startCommand;
     Command createCommand;
 
-    BotApp() {
+    Database database;
+    BotApp(Database database) {
         var repo = new UsersInformation();
-
+        this.database = database;
         // todo: принимать список команд в аргументы конструктора
 
         helpCommand = new Help();
@@ -37,23 +41,19 @@ public class BotApp {
         return defaultAnswer;
     }
 
-    public String setUserPhoto(Long chatID, PhotoSize photo) {
-        if (photo == null) return "Ошибка фото";
+    public String setInformation(Long chatID, String name, PhotoSize photo) throws SQLException {
+        if (photo == null) return "\uD83D\uDD34Ошибка фото";
         var photoId = photo.getFileId();
-        UsersInformation.updateStatusOfPhotoByUserId(chatID, false);
-        System.out.println(photoId);
-        return "Фото загружено";
-        // Записываем в бд chatId = user_id, photoId
-    }
 
-    public String setUserName(Long chatID, String name) {
-        if (name.length() > 20) {
-            return "Имя не может быть таким длинным";
-        } else {
-            UsersInformation.updateStatusOfNameByUserId(chatID, false);
-            System.out.println(name);
-            // Записываем в бд chatId, name
-            return "Имя изменено";
-        }
+        if (name.length() > 20)
+            return "\uD83D\uDD34Имя не может быть таким длинным";
+
+        UsersInformation.updateStatus(chatID, false);
+        System.out.println(name);
+        System.out.println(photoId);
+        System.out.println(chatID);
+        database.updateToDb(chatID,name,photoId);
+        // Записываем в бд chatId, name
+        return "Профиль изменён✅";
     }
 }

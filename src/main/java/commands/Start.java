@@ -3,7 +3,7 @@ package commands;
 public class Start implements Command{
     @Override
     public String getHelp() {
-        return "Начать работу /start";
+        return "/start - начать работу";
     }
 
     @Override
@@ -15,7 +15,9 @@ public class Start implements Command{
     public String Execute() {
         return """
             Привет👋 Этот бот - соревнование фотокарточек.
+            
             Загружай свою и оценивай чужие. Набирай оценки и попади в топ!🔥
+            
             Давай начнём, если тебе нужна помощь, напиши /help""";
     }
 }
