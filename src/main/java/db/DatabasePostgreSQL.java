@@ -11,15 +11,16 @@ public class DatabasePostgreSQL implements Database {
     public static String DATABASE_USER;
     public static String DATABASE_PASSWORD;
     public static String DATABASE_URL;
-
     public DatabasePostgreSQL(String DATABASE_USER, String DATABASE_PASSWORD, String DATABASE_URL) throws SQLException {
         DatabasePostgreSQL.DATABASE_USER = DATABASE_USER;
         DatabasePostgreSQL.DATABASE_PASSWORD = DATABASE_PASSWORD;
         DatabasePostgreSQL.DATABASE_URL = DATABASE_URL;
     }
+    @Override
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DatabasePostgreSQL.DATABASE_URL, DatabasePostgreSQL.DATABASE_USER, DatabasePostgreSQL.DATABASE_PASSWORD);
+    }
 
-    Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USER, DATABASE_PASSWORD);
-    Statement statement = connection.createStatement();
 
     @Override
     public void getFromDb() {
@@ -33,6 +34,8 @@ public class DatabasePostgreSQL implements Database {
 
     @Override
     public void updateToDb(Long user_id, String username, String photo_id) throws SQLException {
+        Connection connection = getConnection();
+        Statement statement = connection.createStatement();
         String response = String.format("""
                    INSERT INTO the_table (user_id, username, photo_id) VALUES (%s, %s, %s)
                    ON CONFLICT (user_id)
@@ -44,4 +47,7 @@ public class DatabasePostgreSQL implements Database {
             e.printStackTrace();
         }
     }
+
+
+
 }
