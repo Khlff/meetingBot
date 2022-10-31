@@ -1,12 +1,13 @@
 package db;
 
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabasePostgreSQL implements Database {
-
 
     public static String DATABASE_USER;
     public static String DATABASE_PASSWORD;
@@ -18,9 +19,12 @@ public class DatabasePostgreSQL implements Database {
     }
     @Override
     public Connection getConnection() throws SQLException {
-        Connection connection =  DriverManager.getConnection(DatabasePostgreSQL.DATABASE_URL, DatabasePostgreSQL.DATABASE_USER, DatabasePostgreSQL.DATABASE_PASSWORD);
-        System.out.println("Подключение установлено");
-        return connection;
+        try {
+            Connection connection = DriverManager.getConnection(DatabasePostgreSQL.DATABASE_URL, DatabasePostgreSQL.DATABASE_USER, DatabasePostgreSQL.DATABASE_PASSWORD);
+            System.out.println("Подключение установлено");
+            return connection;
+        } catch (Exception e) {e.printStackTrace();}
+        return null;
     }
 
     @Override
@@ -43,7 +47,6 @@ public class DatabasePostgreSQL implements Database {
                    ON CONFLICT (user_id)
                    DO UPDATE SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
                 """, user_id, username, photo_id);
-        connection.close();
         try {
             statement.executeUpdate(response);
         } catch (SQLException e) {
