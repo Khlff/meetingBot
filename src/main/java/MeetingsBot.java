@@ -25,7 +25,7 @@ public class MeetingsBot extends TelegramLongPollingBot {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
         message.setChatId(chatID);
-
+        System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
         if (UsersInformation.hasWaitingUpdate(chatID)) {
             if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
                 List<PhotoSize> photos = update.getMessage().getPhoto();

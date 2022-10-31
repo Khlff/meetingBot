@@ -21,25 +21,23 @@
             <artifactId>telegrambots</artifactId>
             <version>6.1.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.26.jre7</version>
         </dependency>
 
-        <!-- Hibernate -->
-        <!-- to start need only this -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate-version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.3</version>
         </dependency>
 
-        <!-- for JPA, use hibernate-entitymanager instead of hibernate-core -->
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>${hibernate-version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.3</version>
         </dependency>
     </dependencies>
 

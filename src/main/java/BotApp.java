@@ -49,9 +49,6 @@ public class BotApp {
             return "\uD83D\uDD34Имя не может быть таким длинным";
 
         UsersInformation.updateStatus(chatID, false);
-        System.out.println(name);
-        System.out.println(photoId);
-        System.out.println(chatID);
         database.updateToDb(chatID,name,photoId);
         // Записываем в бд chatId, name
         return "Профиль изменён✅";
