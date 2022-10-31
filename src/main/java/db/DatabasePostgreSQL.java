@@ -18,9 +18,10 @@ public class DatabasePostgreSQL implements Database {
     }
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DatabasePostgreSQL.DATABASE_URL, DatabasePostgreSQL.DATABASE_USER, DatabasePostgreSQL.DATABASE_PASSWORD);
+        Connection connection =  DriverManager.getConnection(DatabasePostgreSQL.DATABASE_URL, DatabasePostgreSQL.DATABASE_USER, DatabasePostgreSQL.DATABASE_PASSWORD);
+        System.out.println("Подключение установлено");
+        return connection;
     }
-
 
     @Override
     public void getFromDb() {
@@ -34,13 +35,15 @@ public class DatabasePostgreSQL implements Database {
 
     @Override
     public void updateToDb(Long user_id, String username, String photo_id) throws SQLException {
+        System.out.println("зашло");
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
         String response = String.format("""
-                   INSERT INTO the_table (user_id, username, photo_id) VALUES (%s, %s, %s)
+                   INSERT INTO users (user_id, username, photo_id) VALUES (%s, %s, %s)
                    ON CONFLICT (user_id)
                    DO UPDATE SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
                 """, user_id, username, photo_id);
+        connection.close();
         try {
             statement.executeUpdate(response);
         } catch (SQLException e) {

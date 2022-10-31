@@ -12,9 +12,9 @@ public class Main {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             Database database = new DatabasePostgreSQL(
-                    "postgres",
                     "admin",
-                    "jdbc:postgresql://localhost:5432/dbTgBot");
+                    "admin",
+                    "jdbc:postgresql://localhost:5432/tgbot");
             botsApi.registerBot(new MeetingsBot(database));
         } catch (TelegramApiException | SQLException e) {
             e.printStackTrace();

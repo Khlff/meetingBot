@@ -13,13 +13,12 @@ import java.util.List;
 public class MeetingsBot extends TelegramLongPollingBot {
     private final String botToken = System.getenv("BOT_TOKEN");
     private final String botName = System.getenv("BOT_NAME");
-    Database database;
+
+    BotApp botApplication;
 
     public MeetingsBot(Database database) {
-        this.database = database;
+        this.botApplication= new BotApp(database);
     }
-
-    BotApp botApplication = new BotApp(database);
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -32,7 +31,7 @@ public class MeetingsBot extends TelegramLongPollingBot {
                 List<PhotoSize> photos = update.getMessage().getPhoto();
                 PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
 
-                String answer = null;
+                String answer;
                 try {
                     answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
                 } catch (SQLException e) {
