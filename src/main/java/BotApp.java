@@ -11,10 +11,11 @@ public class BotApp {
     //todo модификаторы
     private static Command[] commandList;
 
-    private final static String defaultAnswer = "Команда не найдена";
+    private final static String defaultAnswer = "Команда не найдена. Введите /help для просмотра команд.";
     CanHaveCommandList helpCommand;
     Command startCommand;
     Command createCommand;
+    Command rateCommand;
 
     Database database;
     BotApp(Database database) {
@@ -25,7 +26,8 @@ public class BotApp {
         helpCommand = new Help();
         startCommand = new Start();
         createCommand = new Create(repo);
-        commandList = new Command[]{startCommand, helpCommand, createCommand};
+        rateCommand = new Rate();
+        commandList = new Command[]{startCommand, helpCommand, createCommand,rateCommand};
         helpCommand.setList(commandList);
     }
 
