@@ -30,7 +30,7 @@ public class Create implements Command, CanHaveChatID {
     @Override
     public String Execute() {
         if (!UsersInformation.hasWaitingUpdate(chatId))
-            usersInformation.update(chatId);
+            usersInformation.update(chatId, true, UsersInformation.hasWaitingRate(chatId));
         return """
                 Пришли своё имя и фотокарточку одним сообщением...📝""";
     }

@@ -26,7 +26,7 @@ public class BotApp {
         helpCommand = new Help();
         startCommand = new Start();
         createCommand = new Create(repo);
-        rateCommand = new Rate();
+        rateCommand = new Rate(repo);
         commandList = new Command[]{startCommand, helpCommand, createCommand,rateCommand};
         helpCommand.setList(commandList);
     }
@@ -50,7 +50,7 @@ public class BotApp {
         if (name.length() > 20)
             return "\uD83D\uDD34Имя не может быть таким длинным";
 
-        UsersInformation.updateStatus(chatID, false);
+        UsersInformation.updateStatusOfPhotoAndName(chatID, false);
         database.updateToDb(chatID,name,photoId);
         // Записываем в бд chatId, name
         return "Профиль изменён✅";

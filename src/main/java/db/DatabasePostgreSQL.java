@@ -41,7 +41,7 @@ public class DatabasePostgreSQL implements Database {
         String response = String.format("""
                    INSERT INTO users (user_id, username, photo_id) VALUES (%s, '%s', '%s')
                    ON CONFLICT (user_id)
-                   DO UPDATE return null;SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
+                   DO UPDATE SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
                 """, user_id, username, photo_id);
         try {
             statement.executeUpdate(response);

@@ -1,10 +1,18 @@
 package commands;
 
-public class Rate implements Command{
+import data.UsersInformation;
+
+public class Rate implements Command, CanHaveChatID{
     //Мы должны выдавать случайные картинки из базы данных и отправлять пользователю,
     //он ставит оценку от 1/10, считываем оценку, записываем в бд, присылаем новую картинку.
     //Так до тех пор пока пользователь не введёт выход
 
+    public static UsersInformation usersInformation;
+    private Long chatId;
+
+    public Rate(UsersInformation usersInformation) {
+        Rate.usersInformation = usersInformation;
+    }
     @Override
     public String getHelp() {
         return "/rate - начать оценивать";
@@ -17,6 +25,14 @@ public class Rate implements Command{
 
     @Override
     public String Execute() {
-        return null;
+        if (!UsersInformation.hasWaitingRate(chatId))
+            usersInformation.update(chatId, UsersInformation.hasWaitingUpdate(chatId),true);
+        return "заглушка";
+
+    }
+
+    @Override
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
     }
 }

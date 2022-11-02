@@ -15,7 +15,9 @@ public class Main {
                     "admin",
                     "admin",
                     "jdbc:postgresql://localhost:5432/tgbot");
-            botsApi.registerBot(new MeetingsBot(database));
+//            CommandHandler commandHandler = new CommandHandler();
+//            commandHandler.registerCommand(Command );
+            botsApi.registerBot(new RatingBot(database));
         } catch (TelegramApiException | SQLException e) {
             e.printStackTrace();
         }
