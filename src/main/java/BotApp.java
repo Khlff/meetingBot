@@ -17,18 +17,24 @@ public class BotApp {
     Command createCommand;
     Command rateCommand;
 
+//    class UsersRepository {
+//        private final Database db;
+//        public UsersRepository(Database database) {
+//            this.db = database;
+//        }
+//        void update(Long user_id, String username,String photo_id) throws SQLException {
+//            var con = db.getConnection();
+//
+//        }
+//    }
+
     Database database;
-    BotApp(Database database) {
+    BotApp(Database database, Command[] commands) {
         var repo = new UsersInformation();
         this.database = database;
         // todo: принимать список команд в аргументы конструктора
 
-        helpCommand = new Help();
-        startCommand = new Start();
-        createCommand = new Create(repo);
-        rateCommand = new Rate(repo);
-        commandList = new Command[]{startCommand, helpCommand, createCommand,rateCommand};
-        helpCommand.setList(commandList);
+        commandList = commands;
     }
 
     public String commandHandler(String inputMessage, Long chatID) {

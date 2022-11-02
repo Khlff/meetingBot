@@ -1,3 +1,4 @@
+import commands.*;
 import db.Database;
 import db.DatabasePostgreSQL;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -15,9 +16,16 @@ public class Main {
                     "admin",
                     "admin",
                     "jdbc:postgresql://localhost:5432/tgbot");
-//            CommandHandler commandHandler = new CommandHandler();
-//            commandHandler.registerCommand(Command );
-            botsApi.registerBot(new RatingBot(database));
+            CommandHandler commandHandler = new CommandHandler();
+            commandHandler.registerCommand(Command );
+            helpCommand = new Help();
+            startCommand = new Start();
+            createCommand = new Create(repo);
+            rateCommand = new Rate(repo);
+            commandList = new Command[]{startCommand, helpCommand, createCommand,rateCommand};
+            helpCommand.setList(commandList);
+
+            botsApi.registerBot(new RatingBot(database, commandList));
         } catch (TelegramApiException | SQLException e) {
             e.printStackTrace();
         }

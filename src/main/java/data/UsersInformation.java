@@ -2,7 +2,7 @@ package data;
 
 import java.util.HashMap;
 
-public class UsersInformation {
+public class UsersInformation { // todo бахнуть в бд
     private static HashMap<Long, User> data;
 
     public UsersInformation() {

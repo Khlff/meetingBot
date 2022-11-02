@@ -27,7 +27,7 @@ public class RatingBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
-        message.setChatId(chatID);
+        message.setChatId(chatID);private Boolean statusOfWaitingRate;
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
         if (UsersInformation.hasWaitingRate(chatID)){
