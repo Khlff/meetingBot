@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -20,26 +21,18 @@ public class RatingBot extends TelegramLongPollingBot {
     BotApp botApplication;
 
     public RatingBot(Database database) {
-        this.botApplication= new BotApp(database);
+        this.botApplication = new BotApp(database);
     }
+
 
     @Override
     public void onUpdateReceived(Update update) {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
         message.setChatId(chatID);
-        System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
+        ResultSet resultSetOfPhotos = botApplication.database.getPhotoIdColumn();
 
-        if (UsersInformation.hasWaitingRate(chatID)){
-            final SendPhoto sendPhotoRequest = new SendPhoto();
-            sendPhotoRequest.setChatId(String.valueOf(chatID));
-            sendPhotoRequest.setPhoto(new InputFile("AgACAgIAAxkBAAIDZ2NiDo9zA5aoR7YIFpA9fqjkGDMXAALVvjEbpa4QS40P1Ww9cxAEAQADAgADeAADKgQ"));
-            try {
-                execute(sendPhotoRequest);
-            } catch (final TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
+        System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
         if (UsersInformation.hasWaitingUpdate(chatID)) {
             if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
@@ -56,13 +49,40 @@ public class RatingBot extends TelegramLongPollingBot {
             } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
 
         } else if (update.hasMessage() && update.getMessage().hasText() && UsersInformation.hasWaitingRate(chatID)) {
-            if (Objects.equals(update.getMessage().getText(), "выход"))
-                UsersInformation.updateStatusOfRate(chatID,false);
-            message.setText("Если ещё захотите оценивать - /rate");
-        }
-         else if (update.hasMessage() && update.getMessage().hasText()) {
+            String answer = update.getMessage().getText();
+            if (Objects.equals(update.getMessage().getText(), "/stop")) {
+                UsersInformation.updateStatusOfRate(chatID, false);
+                message.setText("Оценка фотографий остановлена");
+            } else if (answer.matches("\\d+") && Integer.parseInt(answer) <= 10 && Integer.parseInt(answer) > 0){
+                message.setText("Если ещё захотите оценивать - /rate\nЕсли захотите прекратить оценку - /stop");
+            } else {message.setText("Вам нужно оценить фотографию (1-10)\nИли напишите /stop, чтобы остановить оценку");}
+        } else if (update.hasMessage() && update.getMessage().hasText()) {
             message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
         }
+
+        if (UsersInformation.hasWaitingRate(chatID)) {
+            final SendPhoto sendPhotoRequest = new SendPhoto();
+            sendPhotoRequest.setChatId(String.valueOf(chatID));
+            sendPhotoRequest.setPhoto(new InputFile("AgACAgIAAxkBAAIGM2NxB1cUcI42TV9PsaquGQJmgYY1AAKzxDEbI-WJS_BhonlEJ6EwAQADAgADeQADKwQ"));
+
+//            if (resultSetOfPhotos != null) {
+//                try {
+//                    sendPhotoRequest.setPhoto(new InputFile(resultSetOfPhotos.getString("photo_id")));
+//
+//                    resultSetOfPhotos.next();
+//                } catch (SQLException e) {
+//                    throw new RuntimeException(e);
+//                }
+//        }else {
+//                message.setText("Больше нет фотографий для оценивания");
+//            }
+            try {
+                execute(sendPhotoRequest);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+        }
+
 
         try {
             execute(message);
@@ -70,6 +90,7 @@ public class RatingBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public String getBotUsername() {

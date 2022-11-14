@@ -12,8 +12,8 @@ public class Main {
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             Database database = new DatabasePostgreSQL(
-                    "admin",
-                    "admin",
+                    "postgres",
+                    "KhlffAndI5432",
                     "jdbc:postgresql://localhost:5432/tgbot");
 //            CommandHandler commandHandler = new CommandHandler();
 //            commandHandler.registerCommand(Command );
