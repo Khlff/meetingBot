@@ -9,7 +9,10 @@ public interface Database {
     Connection getConnection() throws SQLException;
 
     void getFromDb();
+
+    ResultSet getColumn();
+
     void deleteFromDb();
     void updateToDb(Long user_id, String username,String photo_id) throws SQLException;
-    ResultSet getPhotoIdColumn();
+
 }

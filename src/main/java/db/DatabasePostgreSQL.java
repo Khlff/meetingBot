@@ -31,8 +31,8 @@ public class DatabasePostgreSQL implements Database {
     }
 
     @Override
-    public ResultSet getPhotoIdColumn() {
-        String SQL = "SELECT photo_id FROM users";
+    public ResultSet getColumn() {
+        String SQL = "SELECT * FROM users";
         try {
             Connection conn = getConnection();
             Statement stmt = conn.createStatement();
