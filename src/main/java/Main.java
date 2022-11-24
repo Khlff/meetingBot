@@ -32,6 +32,7 @@ public class Main {
             //
 
                 botsApi.registerBot(new RatingBot(database, commandList));
+
         } catch (TelegramApiException | SQLException e) {
             e.printStackTrace();
         }

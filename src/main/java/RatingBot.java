@@ -36,8 +36,7 @@ public class RatingBot extends TelegramLongPollingBot {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
         message.setChatId(chatID);
-
-
+        
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
         /* TODO: Логика чет хромает, помимо миллионов обёрток в try catch миллион повторяющихся строк кода

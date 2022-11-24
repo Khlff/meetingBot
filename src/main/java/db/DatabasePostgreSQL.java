@@ -49,6 +49,8 @@ public class DatabasePostgreSQL implements Database {
 
     }
 
+    public void insert(String tablename, )
+
     @Override
     public void updateToDb(Long user_id, String username, String photo_id) throws SQLException {
         /* todo:
