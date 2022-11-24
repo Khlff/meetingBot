@@ -1,8 +1,8 @@
 package data;
 
 import java.util.HashMap;
-
-public class UsersInformation {
+// todo Repository
+public class UsersInformation  {
     private static HashMap<Long, User> data;
 
     public UsersInformation() {

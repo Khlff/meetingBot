@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class BotApp {
 
     //todo модификаторы
-    private static Command[] commandList;
+    Command[] commandList;
 
     private final static String defaultAnswer = "Команда не найдена. Введите /help для просмотра команд.";
     CanHaveCommandList helpCommand;
@@ -17,18 +17,21 @@ public class BotApp {
     Command createCommand;
     Command rateCommand;
 
-    Database database;
-    BotApp(Database database) {
-        var repo = new UsersInformation();
-        this.database = database;
-        // todo: принимать список команд в аргументы конструктора
+//    class UsersRepository {
+//        private final Database db;
+//        public UsersRepository(Database database) {
+//            this.db = database;
+//        }
+//        void update(Long user_id, String username,String photo_id) throws SQLException {
+//            var con = db.getConnection();
+//
+//        }
+//    }
 
-        helpCommand = new Help();
-        startCommand = new Start();
-        createCommand = new Create(repo);
-        rateCommand = new Rate(repo);
-        commandList = new Command[]{startCommand, helpCommand, createCommand,rateCommand};
-        helpCommand.setList(commandList);
+    Database database;
+    BotApp(Database database, Command[] commands) {
+        this.database = database;
+        this.commandList = commands;
     }
 
     public String commandHandler(String inputMessage, Long chatID) {
