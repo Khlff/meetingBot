@@ -17,17 +17,6 @@ public class BotApp {
     Command createCommand;
     Command rateCommand;
 
-//    class UsersRepository {
-//        private final Database db;
-//        public UsersRepository(Database database) {
-//            this.db = database;
-//        }
-//        void update(Long user_id, String username,String photo_id) throws SQLException {
-//            var con = db.getConnection();
-//
-//        }
-//    }
-
     Database database;
     BotApp(Database database, Command[] commands) {
         this.database = database;

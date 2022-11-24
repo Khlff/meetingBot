@@ -17,8 +17,6 @@ public class Main {
                     "postgres",
                     "KhlffAndI5432",
                     "jdbc:postgresql://localhost:5432/tgbot");
-//            CommandHandler commandHandler = new CommandHandler();
-//            commandHandler.registerCommand(Command );
 
             // DI-container
 
