@@ -86,7 +86,6 @@ public class RatingBot extends TelegramLongPollingBot {
                 else {
                     sendPhotoRequest.setPhoto(new InputFile(resultSetOfDB.getString("photo_id")));
                     sendPhotoRequest.setCaption(resultSetOfDB.getString("username"));
-                    rateIsValid = true;
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
