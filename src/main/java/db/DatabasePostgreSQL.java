@@ -31,7 +31,7 @@ public class DatabasePostgreSQL implements Database {
     }
 
     @Override
-    public ResultSet getColumn() {
+    public ResultSet getUsersTable() {
         String SQL = "SELECT * FROM users";
         try {
             Connection conn = getConnection();
@@ -51,6 +51,16 @@ public class DatabasePostgreSQL implements Database {
 
     @Override
     public void updateToDb(Long user_id, String username, String photo_id) throws SQLException {
+        /* todo:
+            в Database не хочется конкретной завязки под таблицу
+            хочется только инфраструктурный вещи, а про табличцу в отдлеьном репозитории
+         */
+        /* TODO:
+            Просто нужно каким-то образом избавиться от response и сделать его в отдельном файлике,
+            так как таблица может постоянно изменяться, туда могут добавляться новые колонки, ряды,
+            а файлик DatabasePostgreSQL вообще по сути не надо почти никогда трогать. Стоит обдумать
+            вопрос про отдельный репозиторий в и табличку
+         */
         Connection connection = getConnection();
         Statement statement = connection.createStatement();
         String response = String.format("""
@@ -66,5 +76,6 @@ public class DatabasePostgreSQL implements Database {
         }
     }
 
+    // JPA, DAO
 
 }

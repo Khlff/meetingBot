@@ -23,9 +23,11 @@ public class RatingBot extends TelegramLongPollingBot {
 
     private final ResultSet resultSetOfDB;
 
+    private boolean resultSetOfDBIsEmpty = false;
+
     public RatingBot(Database database, Command[] commands) {
         this.botApplication = new BotApp(database, commands);
-        this.resultSetOfDB = botApplication.database.getColumn();
+        this.resultSetOfDB = botApplication.database.getUsersTable();
     }
 
 
@@ -38,6 +40,9 @@ public class RatingBot extends TelegramLongPollingBot {
 
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
+        /* TODO: Логика чет хромает, помимо миллионов обёрток в try catch миллион повторяющихся строк кода
+            Нужно оптимизировать и убрать всё ненужное, например двойной вызов методо update.getMessage.getText()
+         */
         if (UsersInformation.hasWaitingUpdate(chatID)) {
             if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
                 List<PhotoSize> photos = update.getMessage().getPhoto();
@@ -80,6 +85,7 @@ public class RatingBot extends TelegramLongPollingBot {
                         sendPhotoRequest.setCaption(resultSetOfDB.getString("username"));
                     } else {
                         UsersInformation.updateStatusOfRate(chatID, false);
+                        resultSetOfDBIsEmpty = true;
                         message.setText("Больше нет фотографий для оценивания, оценивание фотографий остановлено");
                     }
                 }
@@ -90,7 +96,8 @@ public class RatingBot extends TelegramLongPollingBot {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-            if (sendPhotoRequest.getCaption() != null && !sendPhotoRequest.getCaption().isEmpty()) {
+            // TODO: Придумать, как убрать этот костыль
+            if (!resultSetOfDBIsEmpty) {
                 try {
                     execute(sendPhotoRequest);
                 } catch (TelegramApiException e) {
@@ -98,6 +105,7 @@ public class RatingBot extends TelegramLongPollingBot {
                 }
             }
         }
+        // TODO: хочется видеть message над sendPhoto
         try {
             execute(message);
         } catch (TelegramApiException e) {

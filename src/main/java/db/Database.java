@@ -10,7 +10,7 @@ public interface Database {
 
     void getFromDb();
 
-    ResultSet getColumn();
+    ResultSet getUsersTable();
 
     void deleteFromDb();
     void updateToDb(Long user_id, String username,String photo_id) throws SQLException;
