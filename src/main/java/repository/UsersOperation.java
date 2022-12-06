@@ -11,4 +11,11 @@ public interface UsersOperation {
 
     boolean getStatusOfWaitingRate(Long user_id) throws SQLException;
     void setStatusOfWaitingRate(Long user_id, boolean newStatus) throws SQLException;
+    boolean getStatusOfRating(Long user_id) throws SQLException;
+    void setStatusOfRating(Long user_id, boolean newStatus) throws SQLException;
+
+    Long getRandomUserId(Long user_id) throws SQLException;
+    String getUsernameByUserId(Long user_id) throws SQLException;
+    String getPhotoIdByUserId(Long user_id) throws SQLException;
+        
 }

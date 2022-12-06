@@ -30,8 +30,8 @@ public class Rate implements Command, CanHaveChatID {
 
     @Override
     public String Execute() throws SQLException {
-        if (!database.users.getStatusOfWaitingRate(chatId))
-            database.users.setStatusOfWaitingRate(chatId, true);
+        if (!database.users.getStatusOfRating(chatId))
+            database.users.setStatusOfRating(chatId, true);
         return "Если хочешь остановить оценивание напиши бла бла бла";
     }
 
