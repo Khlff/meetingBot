@@ -25,7 +25,8 @@ public class Users extends BaseTable implements UsersOperation {
         ResultSet answer = super.executeQuerySqlStatement(String.format("""
                 SELECT status_of_waiting_update FROM users where user_id = %s;
                 """, user_id), null);
-        return answer.first();
+        answer.next();
+        return answer.getBoolean("status_of_waiting_update");
     }
 
     @Override
@@ -42,7 +43,8 @@ public class Users extends BaseTable implements UsersOperation {
         ResultSet answer = super.executeQuerySqlStatement(String.format("""
                    SELECT status_of_waiting_rate FROM users where user_id = %s
                 """, user_id), null);
-        return answer.first();
+        answer.next();
+        return answer.getBoolean("status_of_waiting_rate");
     }
 
     @Override

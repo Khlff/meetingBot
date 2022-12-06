@@ -43,26 +43,26 @@ public class RatingBot extends TelegramLongPollingBot {
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
-        if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
-            try {
-                if (database.users.getStatusOfWaitingUpdate(chatID)) {
-                    List<PhotoSize> photos = update.getMessage().getPhoto();
-                    PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
+        try {
+            if (database.users.getStatusOfWaitingUpdate(chatID)){
+                if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
+                        List<PhotoSize> photos = update.getMessage().getPhoto();
+                        PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
 
-                    String answer;
-                    answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
-                    message.setText(answer);
+                        String answer;
+                        answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
+                        message.setText(answer);
                 } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
 
-        } else if (update.hasMessage() && update.getMessage().hasText()) {
-            try {
-                message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } else if (update.hasMessage() && update.getMessage().hasText()) {
+                try {
+                    message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         try {
