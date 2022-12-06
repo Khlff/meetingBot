@@ -1,14 +1,15 @@
 package commands;
 
 
-import db.DatabaseRepository;
+import repository.StockOfTables;
 
+import java.sql.SQLException;
 
 public class Create implements Command, CanHaveChatID {
     private Long chatId;
-    protected DatabaseRepository database;
+    protected StockOfTables database;
 
-    public Create(DatabaseRepository database) {
+    public Create(StockOfTables database) {
         this.database = database;
     }
 
@@ -28,10 +29,9 @@ public class Create implements Command, CanHaveChatID {
     }
 
     @Override
-    public String Execute() {
-        if (!(database.getStatusOfWaitingName(chatId) && database.getStatusOfWaitingPhoto(chatId))) {
-            database.setStatusOfWaitingPhoto(chatId, true);
-            database.setStatusOfWaitingName(chatId, true);
+    public String Execute() throws SQLException {
+        if (!(database.users.getStatusOfWaitingUpdate(chatId))) {
+            database.users.setStatusOfWaitingUpdate(chatId, true);
         }
         return """
                 Пришли своё имя и фотокарточку одним сообщением...📝""";

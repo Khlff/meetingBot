@@ -1,28 +1,25 @@
 import commands.Command;
-import data.UsersInformation;
-import db.DatabaseRepository;
+import repository.StockOfTables;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 public class RatingBot extends TelegramLongPollingBot {
     private final String botToken = System.getenv("BOT_TOKEN");
     private final String botName = System.getenv("BOT_NAME");
 
     BotApp botApplication;
+    StockOfTables database;
 
-    public RatingBot(DatabaseRepository database, ArrayList<Command> commandList) {
-        this.botApplication= new BotApp(database, commandList);
+    public RatingBot(StockOfTables database, Command[] commandList) {
+        this.botApplication = new BotApp(database, commandList);
+        this.database = database;
     }
 
     @Override
@@ -30,41 +27,42 @@ public class RatingBot extends TelegramLongPollingBot {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
         message.setChatId(chatID);
-        private Boolean statusOfWaitingRate;
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
-        if (UsersInformation.hasWaitingRate(chatID)){
-            final SendPhoto sendPhotoRequest = new SendPhoto();
-            sendPhotoRequest.setChatId(String.valueOf(chatID));
-            sendPhotoRequest.setPhoto(new InputFile("AgACAgIAAxkBAAIDZ2NiDo9zA5aoR7YIFpA9fqjkGDMXAALVvjEbpa4QS40P1Ww9cxAEAQADAgADeAADKgQ"));
+//        try {
+//            if (database.users.getStatusOfWaitingRate(chatID)){
+//                final SendPhoto sendPhotoRequest = new SendPhoto();
+//                sendPhotoRequest.setChatId(String.valueOf(chatID));
+//                sendPhotoRequest.setPhoto(new InputFile("AgACAgIAAxkBAAIDZ2NiDo9zA5aoR7YIFpA9fqjkGDMXAALVvjEbpa4QS40P1Ww9cxAEAQADAgADeAADKgQ"));
+//                try {
+//                    execute(sendPhotoRequest);
+//                } catch (final TelegramApiException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+        if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
             try {
-                execute(sendPhotoRequest);
-            } catch (final TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }
+                if (database.users.getStatusOfWaitingUpdate(chatID)) {
+                    List<PhotoSize> photos = update.getMessage().getPhoto();
+                    PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
 
-        if (UsersInformation.hasWaitingUpdate(chatID)) {
-            if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
-                List<PhotoSize> photos = update.getMessage().getPhoto();
-                PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
-
-                String answer;
-                try {
+                    String answer;
                     answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                message.setText(answer);
-            } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
+                    message.setText(answer);
+                } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
-        } else if (update.hasMessage() && update.getMessage().hasText() && UsersInformation.hasWaitingRate(chatID)) {
-            if (Objects.equals(update.getMessage().getText(), "выход"))
-                UsersInformation.updateStatusOfRate(chatID,false);
-            message.setText("Если ещё захотите оценивать - /rate");
-        }
-         else if (update.hasMessage() && update.getMessage().hasText()) {
-            message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
+        } else if (update.hasMessage() && update.getMessage().hasText()) {
+            try {
+                message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         try {

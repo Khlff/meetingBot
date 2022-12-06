@@ -1,7 +1,5 @@
 package commands;
 
-import java.util.ArrayList;
-
 public class Help implements Command, CanHaveCommandList {
     @Override
     public String getHelp() {
@@ -14,10 +12,10 @@ public class Help implements Command, CanHaveCommandList {
     }
 
 
-    private ArrayList<Command> commandList;
+    private Command[] commandList;
 
     @Override
-    public void setList(ArrayList<Command> commands) {
+    public void setList(Command[] commands) {
         this.commandList = commands;
     }
 

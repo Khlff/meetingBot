@@ -1,26 +1,23 @@
 import commands.*;
-import data.UsersInformation;
-import db.DatabaseRepository;
+import repository.StockOfTables;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 
 public class BotApp {
-    private static ArrayList<Command> commandList;
+    Command[] commandList;
 
     private final static String defaultAnswer = "Команда не найдена. Введите /help для просмотра команд.";
 
-    DatabaseRepository database;
+    StockOfTables database;
 
-    BotApp(DatabaseRepository database, ArrayList<Command> commands) {
+    BotApp(StockOfTables database, Command[] commands) {
         this.database = database;
-        helpCommand.setList(commands);
-        commandList = commands;
+        this.commandList = commands;
     }
 
-    public String commandHandler(String inputMessage, Long chatID) {
+    public String commandHandler(String inputMessage, Long chatID) throws SQLException {
         for (var iterCommand : commandList) {
             if (iterCommand.isActive(inputMessage)) {
                 if (iterCommand instanceof CanHaveChatID chatIDSetter)
@@ -39,9 +36,8 @@ public class BotApp {
         if (name.length() > 20)
             return "\uD83D\uDD34Имя не может быть таким длинным";
 
-        UsersInformation.updateStatusOfPhotoAndName(chatID, false);
-        database.updateUserInformation(chatID, name, photoId);
-        // Записываем в бд chatId, name
+        database.users.setStatusOfWaitingUpdate(chatID, false);
+        database.users.updateUserInformation(chatID, name, photoId);
         return "Профиль изменён✅";
     }
 }
