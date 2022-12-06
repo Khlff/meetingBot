@@ -1,15 +1,15 @@
 package commands;
 
 
-import data.UsersInformation;
+import db.DatabaseRepository;
 
 
 public class Create implements Command, CanHaveChatID {
-    public static UsersInformation usersInformation;
     private Long chatId;
+    protected DatabaseRepository database;
 
-    public Create(UsersInformation usersInformation) {
-        Create.usersInformation = usersInformation;
+    public Create(DatabaseRepository database) {
+        this.database = database;
     }
 
     @Override
@@ -29,8 +29,10 @@ public class Create implements Command, CanHaveChatID {
 
     @Override
     public String Execute() {
-        if (!UsersInformation.hasWaitingUpdate(chatId))
-            usersInformation.update(chatId, true, UsersInformation.hasWaitingRate(chatId));
+        if (!(database.getStatusOfWaitingName(chatId) && database.getStatusOfWaitingPhoto(chatId))) {
+            database.setStatusOfWaitingPhoto(chatId, true);
+            database.setStatusOfWaitingName(chatId, true);
+        }
         return """
                 Пришли своё имя и фотокарточку одним сообщением...📝""";
     }

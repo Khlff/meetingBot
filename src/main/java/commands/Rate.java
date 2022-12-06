@@ -1,6 +1,6 @@
 package commands;
 
-import data.UsersInformation;
+import db.DatabaseRepository;
 
 public class Rate implements Command, CanHaveChatID{
 
@@ -11,8 +11,8 @@ public class Rate implements Command, CanHaveChatID{
     public static UsersInformation usersInformation;
     private Long chatId;
 
-    public Rate(UsersInformation usersInformation) {
-        Rate.usersInformation = usersInformation;
+    public Rate(DatabaseRepository database) {
+
     }
     @Override
     public String getHelp() {
@@ -27,7 +27,7 @@ public class Rate implements Command, CanHaveChatID{
     @Override
     public String Execute() {
         if (!UsersInformation.hasWaitingRate(chatId))
-            usersInformation.update(chatId, UsersInformation.hasWaitingUpdate(chatId),true);
+//            usersInformation.update(chatId, UsersInformation.hasWaitingUpdate(chatId),true);
         return "заглушка";
 
     }

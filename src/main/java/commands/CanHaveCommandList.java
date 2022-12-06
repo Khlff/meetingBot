@@ -1,5 +1,7 @@
 package commands;
 
+import java.util.ArrayList;
+
 public interface CanHaveCommandList extends Command{
-    void setList(Command[] commands);
+    void setList(ArrayList<Command> commands);
 }

@@ -1,5 +1,6 @@
+import commands.Command;
 import data.UsersInformation;
-import db.Database;
+import db.DatabaseRepository;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -9,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -19,15 +21,16 @@ public class RatingBot extends TelegramLongPollingBot {
 
     BotApp botApplication;
 
-    public RatingBot(Database database) {
-        this.botApplication= new BotApp(database);
+    public RatingBot(DatabaseRepository database, ArrayList<Command> commandList) {
+        this.botApplication= new BotApp(database, commandList);
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         var message = new SendMessage();
         Long chatID = Long.valueOf(update.getMessage().getChatId().toString());
-        message.setChatId(chatID);private Boolean statusOfWaitingRate;
+        message.setChatId(chatID);
+        private Boolean statusOfWaitingRate;
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
         if (UsersInformation.hasWaitingRate(chatID)){

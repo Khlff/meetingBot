@@ -1,5 +1,7 @@
 package commands;
 
+import java.util.ArrayList;
+
 public class Help implements Command, CanHaveCommandList {
     @Override
     public String getHelp() {
@@ -12,18 +14,18 @@ public class Help implements Command, CanHaveCommandList {
     }
 
 
-    private Command[] commandList;
+    private ArrayList<Command> commandList;
 
     @Override
-    public void setList(Command[] commands) {
+    public void setList(ArrayList<Command> commands) {
         this.commandList = commands;
     }
 
     @Override
     public String Execute() {
         StringBuilder result = new StringBuilder().append("You can control me by sending these commands:\n\n");
-        if (this.commandList!=null){
-            for (var i : this.commandList){
+        if (this.commandList != null) {
+            for (var i : this.commandList) {
                 result.append(i.getHelp()).append('\n');
             }
             return result.toString();
