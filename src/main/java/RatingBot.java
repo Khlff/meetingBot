@@ -31,6 +31,7 @@ public class RatingBot extends TelegramLongPollingBot {
         message.setChatId(chatID);
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
+
         try {
             if (database.users.isUserExists(chatID)) {
                 if (database.users.getStatusOfWaitingUpdate(chatID)) {
@@ -41,24 +42,12 @@ public class RatingBot extends TelegramLongPollingBot {
                         String answer;
                         answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
                         message.setText(answer);
+
                     } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
 
-                } else if (database.users.getStatusOfRating(chatID)) {
-                    if (database.users.getStatusOfWaitingRate(chatID)) {
-                        if (update.hasMessage() && update.getMessage().hasText()) {
-                            if ("стоп".equalsIgnoreCase(update.getMessage().getText())) {
-                                database.users.setStatusOfRating(chatID, false);
-                                database.users.setStatusOfWaitingRate(chatID, false);
-                                message.setText("Оценка фотографий остановлена");
 
-                            } else if (update.getMessage().getText().matches("^(10|[1-9])$")) {
-                                message.setText("Если захотите прекратить оценку - /stop");
-                                database.users.setStatusOfWaitingRate(chatID, false);
-                            } else {
-                                message.setText("Вам нужно оценить фотографию (1-10)\nИли напишите /stop, чтобы остановить оценку");
-                            }
-                        }
-                    } else {
+                } else if (database.users.getStatusOfRating(chatID)) {
+                    if ("✅".equals(update.getMessage().getText()) || !database.users.getStatusOfWaitingRate(chatID)) {
                         long randomChatId = database.users.getRandomUserId(chatID);
                         String username = database.users.getUsernameByUserId(randomChatId);
                         String photoId = database.users.getPhotoIdByUserId(randomChatId);
@@ -68,26 +57,37 @@ public class RatingBot extends TelegramLongPollingBot {
                         sendPhotoRequest.setPhoto(new InputFile(photoId));
                         sendPhotoRequest.setCaption(username);
                         database.users.setStatusOfWaitingRate(chatID, true);
+                        message.setText("лол");
                         execute(sendPhotoRequest);
-                    }
+
+
+                    } else if (database.users.getStatusOfWaitingRate(chatID) && update.getMessage().getText().matches("^(10|[1-9])$")) {
+                        System.out.printf("Пользователь поставил оценку %s%n", update.getMessage().getText());
+                        database.users.setStatusOfWaitingRate(chatID, false);
+                        message.setText("Идём дальше..");
+
+                    } else if ("стоп".equalsIgnoreCase(update.getMessage().getText())) {
+                        database.users.setStatusOfRating(chatID, false);
+                        database.users.setStatusOfWaitingRate(chatID, false);
+                        message.setText("Оценка фотографий остановлена");
+                    } else if (database.users.getStatusOfWaitingRate(chatID))
+                        message.setText("Вам нужно оценить фотографию (1-10)\nИли напишите Стоп, чтобы остановить оценку");
+                    else
+                        message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
                 }
-            } else if (update.hasMessage() && update.getMessage().hasText()) {
-                try {
-                    message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        } catch (SQLException | TelegramApiException ex) {
-            throw new RuntimeException(ex);
+            } else
+                message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
+        } catch (SQLException |
+                 TelegramApiException e) {
+            throw new RuntimeException(e);
         }
-
-
         try {
             execute(message);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
+        } catch (
+                TelegramApiException e) {
+            throw new RuntimeException(e);
         }
+
     }
 
     @Override

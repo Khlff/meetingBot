@@ -24,8 +24,8 @@ public class Create implements Command, CanHaveChatID {
     }
 
     @Override
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setUserId(Long userId) {
+        this.chatId = userId;
     }
 
     @Override

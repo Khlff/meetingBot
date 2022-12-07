@@ -1,5 +1,6 @@
 package repository;
 
+
 import java.io.Closeable;
 import java.sql.*;
 
@@ -37,8 +38,8 @@ public class BaseTable implements Closeable {
         reopenConnection(); // переоткрываем (если оно неактивно) соединение с СУБД
         Statement statement = connection.createStatement();  // Создаем statement для выполнения sql-команд
         ResultSet answer = statement.executeQuery(sql); // Выполняем statement - sql команду
-//        statement.close();  // Закрываем statement для фиксации изменений в СУБД
-        if (description != null)
+
+        if (description != null && !description.isEmpty())
             System.out.println(description);
         return answer;
     }

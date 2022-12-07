@@ -1,18 +1,13 @@
 package commands;
 
-
 import repository.StockOfTables;
 
 import java.sql.SQLException;
 
 public class Rate implements Command, CanHaveChatID {
 
-    //Мы должны выдавать случайные картинки из базы данных и отправлять пользователю,
-    //он ставит оценку от 1/10, считываем оценку, записываем в бд, присылаем новую картинку.
-    //Так до тех пор пока пользователь не введёт выход
-
     StockOfTables database;
-    private Long chatId;
+    private Long chatID;
 
     public Rate(StockOfTables database) {
         this.database = database;
@@ -30,9 +25,9 @@ public class Rate implements Command, CanHaveChatID {
 
     @Override
     public String Execute() throws SQLException {
-        if (database.users.isUserExists(chatId)) {
-            if (!database.users.getStatusOfRating(chatId))
-                database.users.setStatusOfRating(chatId, true);
+        if (database.users.isUserExists(chatID)) {
+            if (!database.users.getStatusOfRating(chatID))
+                database.users.setStatusOfRating(chatID, true);
             return "Если хочешь остановить оценивание напиши Стоп";
         } else {
             return "Сначала создай свой профиль командой /create";
@@ -40,7 +35,7 @@ public class Rate implements Command, CanHaveChatID {
     }
 
     @Override
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
+    public void setUserId(Long userId) {
+        this.chatID = userId;
     }
 }

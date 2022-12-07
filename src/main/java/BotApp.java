@@ -21,7 +21,7 @@ public class BotApp {
         for (var iterCommand : commandList) {
             if (iterCommand.isActive(inputMessage)) {
                 if (iterCommand instanceof CanHaveChatID chatIDSetter)
-                    chatIDSetter.setChatId(chatID);
+                    chatIDSetter.setUserId(chatID);
 
                 return iterCommand.Execute();
             }
