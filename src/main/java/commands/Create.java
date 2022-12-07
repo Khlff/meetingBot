@@ -30,9 +30,14 @@ public class Create implements Command, CanHaveChatID {
 
     @Override
     public String Execute() throws SQLException {
-        if (!(database.users.getStatusOfWaitingUpdate(chatId))) {
+        if (database.users.isUserExists(chatId)) {
+            if (!(database.users.getStatusOfWaitingUpdate(chatId)))
+                database.users.setStatusOfWaitingUpdate(chatId, true);
+        } else {
+            database.users.createNewUser(chatId);
             database.users.setStatusOfWaitingUpdate(chatId, true);
         }
+
         return """
                 Пришли своё имя и фотокарточку одним сообщением...📝""";
     }

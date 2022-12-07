@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 // Операции, связанные с таблицей user'ов
 public interface UsersOperation {
+    void createNewUser(Long user_id) throws SQLException;
     void updateUserInformation(Long user_id, String username, String photo_id) throws SQLException;
 
     boolean getStatusOfWaitingUpdate(Long user_id) throws SQLException;
@@ -17,5 +18,6 @@ public interface UsersOperation {
     Long getRandomUserId(Long user_id) throws SQLException;
     String getUsernameByUserId(Long user_id) throws SQLException;
     String getPhotoIdByUserId(Long user_id) throws SQLException;
-        
+
+    boolean isUserExists(Long user_id) throws SQLException;
 }

@@ -32,42 +32,44 @@ public class RatingBot extends TelegramLongPollingBot {
         System.out.printf("Update from user: %s, message text: %s\n", chatID, update.getMessage().getText());
 
         try {
-            if (database.users.getStatusOfWaitingUpdate(chatID)) {
-                if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
-                    List<PhotoSize> photos = update.getMessage().getPhoto();
-                    PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
+            if (database.users.isUserExists(chatID)) {
+                if (database.users.getStatusOfWaitingUpdate(chatID)) {
+                    if (update.getMessage().hasPhoto() && update.getMessage().getCaption() != null) {
+                        List<PhotoSize> photos = update.getMessage().getPhoto();
+                        PhotoSize maxPhoto = photos.stream().max(Comparator.comparing(PhotoSize::getFileSize)).orElse(null);
 
-                    String answer;
-                    answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
-                    message.setText(answer);
-                } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
+                        String answer;
+                        answer = botApplication.setInformation(chatID, update.getMessage().getCaption(), maxPhoto);
+                        message.setText(answer);
+                    } else message.setText("\uD83D\uDD34Пришли своё имя и фотокарточку одним сообщением!");
 
-            } else if (database.users.getStatusOfRating(chatID)) {
-                if (database.users.getStatusOfWaitingRate(chatID)) {
-                    if (update.hasMessage() && update.getMessage().hasText()) {
-                        if ("стоп".equalsIgnoreCase(update.getMessage().getText())) {
-                            database.users.setStatusOfRating(chatID, false);
-                            database.users.setStatusOfWaitingRate(chatID, false);
-                            message.setText("Оценка фотографий остановлена");
+                } else if (database.users.getStatusOfRating(chatID)) {
+                    if (database.users.getStatusOfWaitingRate(chatID)) {
+                        if (update.hasMessage() && update.getMessage().hasText()) {
+                            if ("стоп".equalsIgnoreCase(update.getMessage().getText())) {
+                                database.users.setStatusOfRating(chatID, false);
+                                database.users.setStatusOfWaitingRate(chatID, false);
+                                message.setText("Оценка фотографий остановлена");
 
-                        } else if (update.getMessage().getText().matches("^(10|[1-9])$")) {
-                            message.setText("Если захотите прекратить оценку - /stop");
-                            database.users.setStatusOfWaitingRate(chatID, false);
-                        } else {
-                            message.setText("Вам нужно оценить фотографию (1-10)\nИли напишите /stop, чтобы остановить оценку");
+                            } else if (update.getMessage().getText().matches("^(10|[1-9])$")) {
+                                message.setText("Если захотите прекратить оценку - /stop");
+                                database.users.setStatusOfWaitingRate(chatID, false);
+                            } else {
+                                message.setText("Вам нужно оценить фотографию (1-10)\nИли напишите /stop, чтобы остановить оценку");
+                            }
                         }
-                    }
-                } else {
-                    long randomChatId = database.users.getRandomUserId(chatID);
-                    String username = database.users.getUsernameByUserId(randomChatId);
-                    String photoId = database.users.getPhotoIdByUserId(randomChatId);
+                    } else {
+                        long randomChatId = database.users.getRandomUserId(chatID);
+                        String username = database.users.getUsernameByUserId(randomChatId);
+                        String photoId = database.users.getPhotoIdByUserId(randomChatId);
 
-                    final SendPhoto sendPhotoRequest = new SendPhoto();
-                    sendPhotoRequest.setChatId(chatID);
-                    sendPhotoRequest.setPhoto(new InputFile(photoId));
-                    sendPhotoRequest.setCaption(username);
-                    database.users.setStatusOfWaitingRate(chatID, true);
-                    execute(sendPhotoRequest);
+                        final SendPhoto sendPhotoRequest = new SendPhoto();
+                        sendPhotoRequest.setChatId(chatID);
+                        sendPhotoRequest.setPhoto(new InputFile(photoId));
+                        sendPhotoRequest.setCaption(username);
+                        database.users.setStatusOfWaitingRate(chatID, true);
+                        execute(sendPhotoRequest);
+                    }
                 }
             } else if (update.hasMessage() && update.getMessage().hasText()) {
                 try {
@@ -76,10 +78,8 @@ public class RatingBot extends TelegramLongPollingBot {
                     throw new RuntimeException(e);
                 }
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | TelegramApiException ex) {
             throw new RuntimeException(ex);
-        } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
         }
 
 

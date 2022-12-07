@@ -11,13 +11,19 @@ public class Users extends BaseTable implements UsersOperation {
     }
 
     @Override
+    public void createNewUser(Long user_id) throws SQLException {
+        super.executeSqlStatement(String.format("INSERT INTO users (user_id) VALUES (%s)", user_id),
+                "Зарегестрирован новый user");
+    }
+
+    @Override
     public void updateUserInformation(Long user_id, String username, String photo_id) throws SQLException {
 
         super.executeSqlStatement(String.format("""
-                   INSERT INTO users (user_id, username, photo_id) VALUES (%s, '%s', '%s')
-                   ON CONFLICT (user_id)
-                   DO UPDATE SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
-                """, user_id, username, photo_id), "Информация обновлена");
+                       INSERT INTO users (user_id, username, photo_id) VALUES (%s, '%s', '%s')
+                       ON CONFLICT (user_id)
+                       DO UPDATE SET user_id = excluded.user_id, username = excluded.username, photo_id = excluded.photo_id;
+                    """, user_id, username, photo_id), "Информация обновлена");
     }
 
     @Override
@@ -104,10 +110,19 @@ public class Users extends BaseTable implements UsersOperation {
 
     @Override
     public String getPhotoIdByUserId(Long user_id) throws SQLException {
-                ResultSet answer = super.executeQuerySqlStatement(String.format("""
+        ResultSet answer = super.executeQuerySqlStatement(String.format("""
                    SELECT photo_id FROM users where user_id = %s
                 """, user_id), null);
         answer.next();
         return answer.getString("photo_id");
+    }
+
+    @Override
+    public boolean isUserExists(Long user_id) throws SQLException {
+        ResultSet answer = super.executeQuerySqlStatement(String.format("""
+                   SELECT user_id FROM users where user_id = %s
+                """, user_id), null);
+
+        return answer.next();
     }
 }

@@ -30,9 +30,13 @@ public class Rate implements Command, CanHaveChatID {
 
     @Override
     public String Execute() throws SQLException {
-        if (!database.users.getStatusOfRating(chatId))
-            database.users.setStatusOfRating(chatId, true);
-        return "Если хочешь остановить оценивание напиши бла бла бла";
+        if (database.users.isUserExists(chatId)) {
+            if (!database.users.getStatusOfRating(chatId))
+                database.users.setStatusOfRating(chatId, true);
+            return "Если хочешь остановить оценивание напиши Стоп";
+        } else {
+            return "Сначала создай свой профиль командой /create";
+        }
     }
 
     @Override
