@@ -22,6 +22,6 @@ public class StockOfTables {
         StockOfTables.DATABASE_PASSWORD = DATABASE_PASSWORD;
         StockOfTables.DATABASE_URL = DATABASE_URL;
         // Инициализируем таблицы
-        users = new Users("users");
+        users = new Users();
     }
 }

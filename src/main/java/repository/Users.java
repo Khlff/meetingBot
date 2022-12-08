@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class Users extends BaseTable implements UsersOperation {
 
-    Users(String tableName) throws SQLException {
-        super(tableName);
+    Users() throws SQLException {
+        super("users");
     }
 
     @Override

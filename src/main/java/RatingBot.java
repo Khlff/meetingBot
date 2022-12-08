@@ -57,7 +57,7 @@ public class RatingBot extends TelegramLongPollingBot {
                         sendPhotoRequest.setPhoto(new InputFile(photoId));
                         sendPhotoRequest.setCaption(username);
                         database.users.setStatusOfWaitingRate(chatID, true);
-                        message.setText("лол");
+                        message.setText("Оцените фотографию: ");
                         execute(sendPhotoRequest);
 
 
@@ -75,6 +75,7 @@ public class RatingBot extends TelegramLongPollingBot {
                     else
                         message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
                 }
+                else message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
             } else
                 message.setText(botApplication.commandHandler(update.getMessage().getText(), chatID));
         } catch (SQLException |
