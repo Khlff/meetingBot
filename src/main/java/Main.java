@@ -13,8 +13,8 @@ public class Main {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
 
             StockOfTables database = new StockOfTables(
-                    "admin",
-                    "admin",
+                    "postgres",
+                    "KhlffAndI5432",
                     "jdbc:postgresql://localhost:5432/tgbot"
             );
             Help helpCommand = new Help();
